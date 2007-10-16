@@ -1,10 +1,9 @@
-s = "1113213211"
+-- e.g.: ["1", "11", "21", "1211", "111221", "312211", "13112221",
+-- "1113213211", "31131211131221", "13211311123113112211"]
 
-morris 0 = "1"
-morris (n+1) = nextMorris $ morris n
+morris = iterate nextMorris "1"
 
 nextMorris :: String -> String
--- nextMorris s = 
 nextMorris [] = ""
-nextMorris s = let (a,b) = break (\x -> x /= s !! 0) s in
-	show (length a) ++ [head a] ++ nextMorris(b)
+nextMorris s@(c:cs) = let (a,b) = span (== c) s in
+	show (length a) ++ c:nextMorris(b)
