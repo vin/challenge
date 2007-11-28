@@ -13,3 +13,9 @@ for x in d:
     else:
         odd.append(x)
         i = True
+e = cave.copy()
+e.putdata(even)
+o = cave.copy()
+o.putdata(odd)
+e.show()
+o.show()
