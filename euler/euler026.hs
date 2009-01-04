@@ -10,5 +10,5 @@ import Control.Arrow
 
 cycle_length p = head $ dropWhile (\k -> 10^k `mod` p /= 1) [1..]
 
-main = putStrLn . show $ snd . maximum $
-            map (cycle_length &&& id) (takeWhile (< 1000) (drop 10 primes))
+main = print . snd . maximum $
+            map (cycle_length &&& id) $ takeWhile (< 1000) $ drop 10 primes
