@@ -1,5 +1,6 @@
 import Data.List(unfoldr, maximumBy, foldl1')
 import Data.Ord(comparing)
+import Data.Word
 import Control.Arrow
 
 
@@ -16,6 +17,12 @@ collatz2 n = n : collatz2 next
   where next | even n = n `div` 2
              | odd n  = 3 * n + 1
 
+len_collatz :: Word32 -> Int
+len_collatz 1 = 1
+len_collatz n = len_collatz next + 1
+  where next | even n = n `div` 2
+             | odd n  = 3 * n + 1
+
 -- main = print $ foldl1' max $ map (length.collatz) [1..1000000]
 
 maximumBy' :: (a -> a -> Ordering) -> [a] -> a
@@ -26,6 +33,6 @@ maximumBy' cmp xs =  foldl1' max xs
                                          GT -> x
                                          _  -> y 
 
---main = print $ maximumBy' (comparing $ length.collatz2) [1..1000000]
+--main = print $ maximumBy' (comparing $ len_collatz) [1..1000000]
 
-main = print . snd . maximum $ map ((length &&& head) . collatz2) [1..1000000]
+main = print . snd . maximum $ map (len_collatz &&& id) [1..1000000]
