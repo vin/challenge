@@ -16,8 +16,7 @@ collatz2 n = n : collatz2 next
   where next | even n = n `div` 2
              | odd n  = 3 * n + 1
 
--- main = do
---   print $ foldl1' max $ map (length.collatz) [1..1000000]
+-- main = print $ foldl1' max $ map (length.collatz) [1..1000000]
 
 maximumBy' :: (a -> a -> Ordering) -> [a] -> a
 maximumBy' _ [] =  error "List.maximumBy: empty list"
@@ -27,4 +26,6 @@ maximumBy' cmp xs =  foldl1' max xs
                                          GT -> x
                                          _  -> y 
 
-main = putStrLn . show $ snd . maximum $ map ((length &&& id) . collatz) [1..1000000]
+--main = print $ maximumBy' (comparing $ length.collatz2) [1..1000000]
+
+main = print . snd . maximum $ map ((length &&& head) . collatz2) [1..1000000]
