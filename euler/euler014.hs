@@ -35,4 +35,4 @@ maximumBy' cmp xs =  foldl1' max xs
 
 --main = print $ maximumBy' (comparing $ len_collatz) [1..1000000]
 
-main = print . snd . maximum $ map (len_collatz &&& id) [1..1000000]
+main = print . snd . maximum $ map (len_collatz &&& id) [1,3..1000000]
