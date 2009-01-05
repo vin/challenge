@@ -23,3 +23,4 @@ candidates2:: [Integer]
 candidates2 = filter (any (>1).map length.group.differences.sort.filter isPrime.map read.filter (not.isPrefixOf "0").nub.permutations.show) candidates
 
 
+main = print candidates2
