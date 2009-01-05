@@ -1,7 +1,10 @@
-module Primes (isPrime, primes, factor, numfactors) where
-import Data.List (group)
+module Primes (isPrime, primes, factor, numfactors, factors) where
+import Data.List (group, nub)
+import Control.Monad (filterM)
 
-isPrime a = isPrimeHelper a primes
+isPrime a 
+  | a < 2     = False
+  | otherwise = isPrimeHelper a primes
 
 isPrimeHelper a (p:ps)
         | p*p > a = True
@@ -16,3 +19,8 @@ factor n = let f = head (filter (\p -> n `mod` p == 0) primes) in
 
 
 numfactors = product . map ((+1).length) . group . factor
+
+powerset :: [a] -> [[a]]
+powerset = filterM (const [True, False])
+
+factors = nub . (map product) . powerset . factor
