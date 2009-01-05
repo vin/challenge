@@ -11,15 +11,16 @@ isPentagonal n = let d = 24 * n + 1
                      root = (round.sqrt.fromIntegral) d in
   (root*root == d) && root `mod` 6 == 5
 
-pentagonalSum n = case find (isPentagonal.(n-)) $ takeWhile(<=n) pentagonals of
-  Just r -> Just (r, n-r)
-  Nothing -> Nothing
+-- generates a list of pairs of pentagonal numbers that add up to n.
+pentagonalSum :: Integer -> [(Integer,Integer)]
+pentagonalSum n = map (id &&& (n-)) $ filter (isPentagonal.(n-)) candidates
+  where candidates = takeWhile(<n) . dropWhile (<n`div`2) $ pentagonals
 
-results1 = [p | Just p <- map pentagonalSum pentagonals]
+-- a list of pairs of pentagonals whose sums are pentagonal
+pentagonalPairs = concatMap pentagonalSum $ pentagonals
 
+-- we'll filter out only the pairs whose differences are also pentagonal
 differenceIsPentagonal :: (Integer, Integer) -> Bool
-differenceIsPentagonal = isPentagonal.(uncurry.flip) (-)
+differenceIsPentagonal = isPentagonal.uncurry (-)
 
-isPentagonalSum n = any (isPentagonal.(n-)) $ takeWhile(<=n) pentagonals
-
-main = print . head $ filter differenceIsPentagonal results1
+main = print . uncurry(-) . head . filter differenceIsPentagonal $ pentagonalPairs
