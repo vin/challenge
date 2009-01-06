@@ -1,5 +1,5 @@
 import Poker
-import Control.Arrow
+--import Control.Arrow
 
 hands :: [Card] -> (Hand,Hand)
 hands = (hand . take 5 &&& hand . drop 5)
@@ -15,4 +15,5 @@ main = do
   let games = map (map (read::String->Card).words) $ lines f
       winners = map (winner.hands) games
     in
-      print . length . filter (==1) $ winners
+      --putStr $ unlines $ map (show.(winner.hands &&& hands)) games
+      print $ length . filter (==1) $ winners

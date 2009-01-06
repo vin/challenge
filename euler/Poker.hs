@@ -1,7 +1,8 @@
-module Poker (Suit, Card, rankToInt, ace, jack, queen, king, Hand, deck, hand) where
+module Poker (Suit, Card, Hand, deck, hand, handType) where
 
-import Data.List(sort, group)
+import Data.List(sort, group, sortBy)
 import Char(digitToInt, intToDigit)
+import Data.Ord(comparing)
 
 data Suit = Club | Diamond  | Heart | Spade deriving (Eq, Ord)
 data Card = Card { rank :: Int 
@@ -10,14 +11,14 @@ data Card = Card { rank :: Int
           deriving (Eq, Ord)
 
 
-rankToInt 'A' = 1
+rankToInt 'A' = 14
 rankToInt 'T' = 10
 rankToInt 'J' = 11
 rankToInt 'Q' = 12
 rankToInt 'K' = 13
 rankToInt c = digitToInt c
 
-intToRank 1 = 'A'
+intToRank 14 = 'A'
 intToRank 10 = 'T'
 intToRank 11 = 'J'
 intToRank 12 = 'Q'
@@ -36,13 +37,17 @@ readsCard (rankChar:suitChar:rest) =
                       (suit,remainder) <- readsSuit (suitChar:rest)]
 readsCard _ = []
 
+instance Read Card where
+  readsPrec _ s = readsCard s
+
 showsSuit :: Suit -> ShowS
-showsSuit s = ((case s of
-  Club -> 'C'
-  Diamond -> 'D'
-  Heart -> 'H'
-  Spade -> 'S'
-  ):)
+showsSuit suit =
+   let s = case suit of
+             Club -> 'C'
+             Diamond -> 'D'
+             Heart -> 'H'
+             Spade -> 'S'
+   in (s:)
 
 instance Show Suit where
   showsPrec _ s = showsSuit s
@@ -54,21 +59,18 @@ readsSuit ('H':rest) = [(Heart, rest)]
 readsSuit ('S':rest) = [(Spade, rest)]
 readsSuit _ = []
 
-instance Read Card where
-  readsPrec _ s = readsCard s
-
 instance Read Suit where
   readsPrec _ s = readsSuit s
 
 ace, jack, queen, king :: Int
-ace   = 1
 jack  = 11
 queen = 12
 king  = 13
+ace   = 14
 
 
 deck :: [Card]
-deck = [ Card i s | i <- [ 1..13 ], s <- [ Club, Diamond, Heart, Spade ] ]
+deck = [ Card i s | i <- [ 2..14 ], s <- [ Club, Diamond, Heart, Spade ] ]
 
 
 data HandType = HighCard  | Pair | TwoPair | ThreeOfAKind | Straight | Flush
@@ -76,8 +78,14 @@ data HandType = HighCard  | Pair | TwoPair | ThreeOfAKind | Straight | Flush
           deriving (Eq, Show, Ord)
 
 data Hand = Hand { handType :: HandType
-                 , cards :: [Card]
-                 } deriving (Eq, Show, Ord)
+                 , cards :: [Int]
+                 } deriving (Eq, Ord)
+
+showHand :: Hand -> ShowS
+showHand (Hand ht cards) = shows ht . shows cards
+
+instance Show Hand where
+  showsPrec _ = showHand
 
 hand :: [Card] -> Hand
 hand cs = 
@@ -91,16 +99,17 @@ hand cs =
         [1,2,2]                                      -> TwoPair
         [1,1,3]                                      -> ThreeOfAKind
         [2,3]                                        -> FullHouse
-        [1,4]                                        -> FourOfAKind) (sort cs)
+        [1,4]                                        -> FourOfAKind) ordered
   where
     (x:xs) = (sort . map rank) cs
     (s:ss) = map suit cs
 
-    isStraight | x == ace && xs == [ 10..king ] = True
+    isStraight | x == ace && xs == [ 2..5 ] = True
                | otherwise                      = xs == [ x+1..x+4 ]
 
     isFlush = all (== s) ss
 
     matches = (sort . map length . group) (x:xs)
+    ordered = ungroup . reverse . sortBy (comparing length) . group $ x:xs
 
-
+ungroup = foldr (++) []
