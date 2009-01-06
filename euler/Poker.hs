@@ -71,13 +71,17 @@ deck :: [Card]
 deck = [ Card i s | i <- [ 1..13 ], s <- [ Club, Diamond, Heart, Spade ] ]
 
 
-data Hand = HighCard  | Pair | TwoPair | ThreeOfAKind | Straight | Flush
+data HandType = HighCard  | Pair | TwoPair | ThreeOfAKind | Straight | Flush
           | FullHouse | FourOfAKind | StraightFlush 
           deriving (Eq, Show, Ord)
 
+data Hand = Hand { handType :: HandType
+                 , cards :: [Card]
+                 } deriving (Eq, Show, Ord)
+
 hand :: [Card] -> Hand
 hand cs = 
-    case matches of 
+    Hand (case matches of 
         [1,1,1,1,1] -> case undefined of
                            _ | isStraight && isFlush -> StraightFlush
                            _ | isFlush               -> Flush
@@ -87,7 +91,7 @@ hand cs =
         [1,2,2]                                      -> TwoPair
         [1,1,3]                                      -> ThreeOfAKind
         [2,3]                                        -> FullHouse
-        [1,4]                                        -> FourOfAKind
+        [1,4]                                        -> FourOfAKind) (sort cs)
   where
     (x:xs) = (sort . map rank) cs
     (s:ss) = map suit cs
