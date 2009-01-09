@@ -16,4 +16,12 @@ change n denominations = let ds = (filter (<=n) denominations) in
     concatMap (\d -> map (d:) $ change (n-d) (filter (<=d) ds)) ds
 
 
+change2 n [] = 0
+change2 0 _ = 1
+change2 n coins
+  | n < 0 = 0
+  | otherwise = change2 (n - head coins) coins + change2 n (tail coins)
+
+
+
 main = print $ length $ change 200 denominations
