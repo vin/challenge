@@ -1,7 +1,6 @@
 import Data.List
 import Data.Ord
 import Data.Maybe
-import Control.Arrow
 
 eqing :: (Eq b) => (a -> b) -> a -> a -> Bool
 eqing fn a b = (fn a) == (fn b)
@@ -13,10 +12,10 @@ fstEq = eqing fst
 sndEq :: (Eq b) => (a,b) -> (a,b) -> Bool
 sndEq = eqing snd
 
-squares = map (\x -> x*x) $ [1..]
+squares = map (\x -> x*x) [1..]
 
 digit :: Int -> [Integer] -> [Integer]
-digit len = map snd . takeWhile ((== len).fst) . dropWhile((< len).fst). map (length.show &&& id) 
+digit len = takeWhile ((== len).length.show) . dropWhile((< len).length.show)
 
 
 anagrams :: [String] -> [[String]]
