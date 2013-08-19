@@ -1,5 +1,5 @@
 import Poker
---import Control.Arrow
+import Control.Arrow
 
 hands :: [Card] -> (Hand,Hand)
 hands = (hand . take 5 &&& hand . drop 5)
