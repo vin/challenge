@@ -1,7 +1,7 @@
 module Poker (Suit, Card, Hand, deck, hand, handType) where
 
 import Data.List(sort, group, sortBy)
-import Char(digitToInt, intToDigit)
+import Data.Char(digitToInt, intToDigit)
 import Data.Ord(comparing)
 
 data Suit = Club | Diamond  | Heart | Spade deriving (Eq, Ord)
@@ -104,8 +104,8 @@ hand cs =
     (x:xs) = (sort . map rank) cs
     (s:ss) = map suit cs
 
-    isStraight | x == ace && xs == [ 2..5 ] = True
-               | otherwise                      = xs == [ x+1..x+4 ]
+    isStraight | (x:xs) == [2..5] ++ [ ace ] = True
+               | otherwise                      = xs == [x+1..x+4]
 
     isFlush = all (== s) ss
 
